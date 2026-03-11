@@ -38,43 +38,44 @@ export default function ComprehensionQuiz({ questions, onComplete }: Comprehensi
   if (finished) {
     const score = Math.round((correctCount / questions.length) * 100);
     return (
-      <div className="text-center py-8">
-        <div className="text-4xl mb-3">
-          {score >= 80 ? '🎉' : score >= 50 ? '👍' : '💪'}
-        </div>
-        <p className="text-lg font-bold mb-1">
-          {correctCount} / {questions.length} 問正解
-        </p>
-        <p className="text-2xl font-bold text-accent">{score}%</p>
+      <div className="text-center py-8 slide-up">
+        <div className="text-5xl mb-3">{score >= 80 ? '🎉' : score >= 50 ? '👍' : '💪'}</div>
+        <p className="text-sm text-foreground/40 mb-1">{correctCount} / {questions.length} 問正解</p>
+        <p className="text-3xl font-black text-accent">{score}%</p>
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="text-sm text-foreground/50 mb-3">
-        質問 {currentQ + 1} / {questions.length}
+    <div className="slide-up">
+      <div className="flex items-center gap-2 mb-3">
+        <div className="flex-1 h-1 bg-card-border rounded-full">
+          <div className="h-full bg-warning rounded-full transition-all" style={{ width: `${((currentQ + 1) / questions.length) * 100}%` }} />
+        </div>
+        <span className="text-[10px] text-foreground/25">{currentQ + 1}/{questions.length}</span>
       </div>
-      <h4 className="text-base font-medium mb-4">{question.question}</h4>
+
+      <h4 className="text-sm font-medium mb-3">{question.question}</h4>
+
       <div className="space-y-2">
         {question.options.map((option, index) => {
-          let className = 'w-full text-left px-4 py-3 rounded-lg border transition-all text-sm ';
-          if (selectedAnswer === null) {
-            className += 'bg-card-bg border-card-border hover:border-accent/50 cursor-pointer';
-          } else if (index === question.correctIndex) {
-            className += 'bg-success/20 border-success text-success';
-          } else if (selectedAnswer === index) {
-            className += 'bg-danger/20 border-danger text-danger';
-          } else {
-            className += 'bg-card-bg border-card-border opacity-50';
-          }
+          const isCorrectOption = index === question.correctIndex;
+          const isSelected = selectedAnswer === index;
 
           return (
             <button
               key={index}
               onClick={() => handleSelect(index)}
-              className={className}
               disabled={selectedAnswer !== null}
+              className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                selectedAnswer === null
+                  ? 'bg-card-bg text-foreground/70 active:bg-card-border'
+                  : isCorrectOption
+                    ? 'bg-success/15 text-success correct-pop'
+                    : isSelected
+                      ? 'bg-danger/15 text-danger'
+                      : 'bg-card-bg text-foreground/20'
+              }`}
             >
               {option}
             </button>
@@ -85,9 +86,9 @@ export default function ComprehensionQuiz({ questions, onComplete }: Comprehensi
       {selectedAnswer !== null && (
         <button
           onClick={handleNext}
-          className="w-full mt-4 px-6 py-3 bg-accent text-white rounded-lg hover:bg-accent-hover transition-colors"
+          className="w-full mt-3 py-3.5 bg-accent text-white rounded-2xl font-semibold text-sm active:bg-accent-hover transition-colors slide-up"
         >
-          {currentQ + 1 >= questions.length ? '結果を見る' : '次の質問'}
+          {currentQ + 1 >= questions.length ? '結果を見る' : '次へ'}
         </button>
       )}
     </div>

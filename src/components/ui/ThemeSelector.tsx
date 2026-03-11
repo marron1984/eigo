@@ -16,29 +16,29 @@ export default function ThemeSelector({
   onDifficultyChange,
 }: ThemeSelectorProps) {
   return (
-    <div className="space-y-4">
-      {/* テーマ選択 */}
+    <div className="space-y-3">
+      {/* テーマ: 横スクロール */}
       <div>
-        <label className="text-sm text-foreground/50 mb-2 block">テーマ</label>
-        <div className="flex flex-wrap gap-2">
+        <div className="text-[10px] text-foreground/30 font-medium uppercase tracking-wider mb-1.5 px-1">テーマ</div>
+        <div className="flex gap-1.5 overflow-x-auto app-scroll pb-1">
           <button
             onClick={() => onThemeChange('all')}
-            className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+            className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
               selectedTheme === 'all'
                 ? 'bg-accent text-white'
-                : 'bg-card-bg border border-card-border text-foreground/60 hover:border-accent/50'
+                : 'bg-card-bg text-foreground/40 active:bg-card-border'
             }`}
           >
-            すべて
+            ALL
           </button>
           {THEMES.map(theme => (
             <button
               key={theme.id}
               onClick={() => onThemeChange(theme.id)}
-              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                 selectedTheme === theme.id
                   ? 'bg-accent text-white'
-                  : 'bg-card-bg border border-card-border text-foreground/60 hover:border-accent/50'
+                  : 'bg-card-bg text-foreground/40 active:bg-card-border'
               }`}
             >
               {theme.icon} {theme.name}
@@ -47,28 +47,28 @@ export default function ThemeSelector({
         </div>
       </div>
 
-      {/* 難易度選択 */}
+      {/* レベル */}
       <div>
-        <label className="text-sm text-foreground/50 mb-2 block">レベル</label>
-        <div className="flex flex-wrap gap-2">
+        <div className="text-[10px] text-foreground/30 font-medium uppercase tracking-wider mb-1.5 px-1">レベル</div>
+        <div className="flex gap-1.5 overflow-x-auto app-scroll pb-1">
           <button
             onClick={() => onDifficultyChange('all')}
-            className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+            className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
               selectedDifficulty === 'all'
                 ? 'bg-accent text-white'
-                : 'bg-card-bg border border-card-border text-foreground/60 hover:border-accent/50'
+                : 'bg-card-bg text-foreground/40 active:bg-card-border'
             }`}
           >
-            すべて
+            ALL
           </button>
           {DIFFICULTIES.map(diff => (
             <button
               key={diff.id}
               onClick={() => onDifficultyChange(diff.id)}
-              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                 selectedDifficulty === diff.id
                   ? 'bg-accent text-white'
-                  : 'bg-card-bg border border-card-border text-foreground/60 hover:border-accent/50'
+                  : 'bg-card-bg text-foreground/40 active:bg-card-border'
               }`}
             >
               {diff.name}

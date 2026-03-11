@@ -12,6 +12,12 @@ import WordList from '@/components/vocabulary/WordList';
 
 type Mode = 'flashcard' | 'quiz' | 'list';
 
+const modes: { id: Mode; label: string }[] = [
+  { id: 'flashcard', label: 'カード' },
+  { id: 'quiz', label: 'クイズ' },
+  { id: 'list', label: '一覧' },
+];
+
 export default function VocabularyPage() {
   const [mode, setMode] = useState<Mode>('flashcard');
   const [selectedTheme, setSelectedTheme] = useState<Theme | 'all'>('all');
@@ -34,14 +40,12 @@ export default function VocabularyPage() {
   const handleFlashcardResult = useCallback((quality: number) => {
     const word = shuffledWords[currentIndex];
     if (!word) return;
-
     const existing = progress.vocabulary.find(v => v.wordId === word.id);
     const newProgress = calculateNextReview(existing, quality);
     newProgress.wordId = word.id;
     updateVocabulary(newProgress);
     markStudyDay();
     addActivity(0.5, quality >= 3 ? 1 : 0);
-
     setCurrentIndex(prev => prev + 1);
   }, [shuffledWords, currentIndex, progress.vocabulary, updateVocabulary, markStudyDay, addActivity]);
 
@@ -54,29 +58,24 @@ export default function VocabularyPage() {
     addActivity(0.5, quality >= 3 ? 1 : 0);
   }, [progress.vocabulary, updateVocabulary, markStudyDay, addActivity]);
 
-  const resetFlashcards = () => setCurrentIndex(0);
-
-  const modes: { id: Mode; label: string }[] = [
-    { id: 'flashcard', label: 'フラッシュカード' },
-    { id: 'quiz', label: 'クイズ' },
-    { id: 'list', label: '単語一覧' },
-  ];
-
   return (
-    <div className="max-w-3xl mx-auto pb-20 md:pb-0">
-      <h1 className="text-2xl font-bold mb-1">📖 単語学習</h1>
-      <p className="text-foreground/50 text-sm mb-6">フラッシュカードやクイズで語彙力を強化</p>
+    <div className="px-5 pt-5">
+      {/* ヘッダー */}
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-lg font-bold">単語学習</h1>
+        <span className="text-xs text-foreground/25">{filteredWords.length}語</span>
+      </div>
 
       {/* モード切り替え */}
-      <div className="flex gap-2 mb-6">
+      <div className="flex bg-card-bg rounded-xl p-1 mb-4">
         {modes.map(m => (
           <button
             key={m.id}
             onClick={() => { setMode(m.id); setCurrentIndex(0); }}
-            className={`px-4 py-2 rounded-lg text-sm transition-colors ${
+            className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${
               mode === m.id
-                ? 'bg-accent text-white'
-                : 'bg-card-bg border border-card-border text-foreground/60 hover:border-accent/50'
+                ? 'bg-accent text-white shadow-sm'
+                : 'text-foreground/35'
             }`}
           >
             {m.label}
@@ -84,8 +83,8 @@ export default function VocabularyPage() {
         ))}
       </div>
 
-      {/* テーマ・レベル選択 */}
-      <div className="mb-6">
+      {/* フィルター */}
+      <div className="mb-4">
         <ThemeSelector
           selectedTheme={selectedTheme}
           selectedDifficulty={selectedDifficulty}
@@ -94,29 +93,38 @@ export default function VocabularyPage() {
         />
       </div>
 
-      <div className="text-sm text-foreground/40 mb-4">
-        {filteredWords.length} 語
-      </div>
-
       {/* コンテンツ */}
       {filteredWords.length === 0 ? (
-        <div className="text-center py-12 text-foreground/40">
-          該当する単語がありません。条件を変更してください。
+        <div className="text-center py-16 text-foreground/25 text-sm">
+          該当する単語がありません
         </div>
       ) : mode === 'flashcard' ? (
         currentIndex < shuffledWords.length ? (
-          <Flashcard
-            key={shuffledWords[currentIndex].id}
-            word={shuffledWords[currentIndex]}
-            onResult={handleFlashcardResult}
-          />
+          <>
+            {/* 進捗 */}
+            <div className="flex items-center gap-2 mb-4">
+              <div className="flex-1 h-1 bg-card-border rounded-full">
+                <div
+                  className="h-full bg-accent rounded-full transition-all duration-300"
+                  style={{ width: `${((currentIndex + 1) / shuffledWords.length) * 100}%` }}
+                />
+              </div>
+              <span className="text-[10px] text-foreground/25">{currentIndex + 1}/{shuffledWords.length}</span>
+            </div>
+            <Flashcard
+              key={shuffledWords[currentIndex].id}
+              word={shuffledWords[currentIndex]}
+              onResult={handleFlashcardResult}
+            />
+          </>
         ) : (
-          <div className="text-center py-12">
-            <div className="text-4xl mb-4">🎉</div>
-            <h3 className="text-xl font-bold mb-2">全カード完了！</h3>
+          <div className="text-center py-12 slide-up">
+            <div className="text-5xl mb-4">🎉</div>
+            <h3 className="text-lg font-bold mb-2">全カード完了！</h3>
+            <p className="text-xs text-foreground/40 mb-6">お疲れさま！継続が大事です。</p>
             <button
-              onClick={resetFlashcards}
-              className="px-6 py-3 bg-accent text-white rounded-lg hover:bg-accent-hover transition-colors"
+              onClick={() => setCurrentIndex(0)}
+              className="w-full py-3.5 bg-accent text-white rounded-2xl font-semibold text-sm active:bg-accent-hover transition-colors"
             >
               もう一度
             </button>

@@ -1,11 +1,23 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import Header from "@/components/layout/Header";
 import Navigation from "@/components/layout/Navigation";
 
 export const metadata: Metadata = {
   title: "Eigo - 英語学習",
-  description: "吉田俊輔の英語学習プラットフォーム",
+  description: "毎日続ける英語学習プラットフォーム",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Eigo",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: "#0a0a0f",
 };
 
 export default function RootLayout({
@@ -15,13 +27,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      <body className="antialiased min-h-screen">
-        <Header />
-        <div className="flex min-h-[calc(100vh-64px)]">
-          <Navigation />
-          <main className="flex-1 p-6 md:p-8 overflow-auto">
+      <body className="antialiased h-full">
+        <div className="h-full flex flex-col max-w-lg mx-auto relative">
+          <main className="flex-1 app-scroll pb-20">
             {children}
           </main>
+          <Navigation />
         </div>
       </body>
     </html>

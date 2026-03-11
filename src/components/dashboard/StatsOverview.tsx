@@ -7,29 +7,26 @@ interface StatsOverviewProps {
 }
 
 export default function StatsOverview({ progress }: StatsOverviewProps) {
-  const wordsLearned = progress.vocabulary.length;
   const totalCorrect = progress.vocabulary.reduce((sum, v) => sum + v.correct, 0);
   const totalAttempts = progress.vocabulary.reduce((sum, v) => sum + v.correct + v.incorrect, 0);
   const accuracy = totalAttempts > 0 ? Math.round((totalCorrect / totalAttempts) * 100) : 0;
-  const listeningCompleted = progress.listening.length;
-  const shadowingCompleted = progress.shadowing.length;
+  const totalActiveDays = progress.dailyActivity.length;
 
   const stats = [
-    { label: '学習済み単語', value: wordsLearned, unit: '語', color: 'text-accent' },
-    { label: '正答率', value: accuracy, unit: '%', color: 'text-success' },
-    { label: 'ヒアリング完了', value: listeningCompleted, unit: '問', color: 'text-warning' },
-    { label: 'シャドーイング完了', value: shadowingCompleted, unit: '回', color: 'text-purple-400' },
+    { label: '正答率', value: accuracy, unit: '%', color: '#10b981' },
+    { label: '学習日数', value: totalActiveDays, unit: '日', color: '#6366f1' },
+    { label: '総学習', value: progress.vocabulary.length + progress.listening.length + progress.shadowing.length, unit: '回', color: '#f59e0b' },
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-3 gap-2">
       {stats.map(stat => (
-        <div key={stat.label} className="bg-card-bg border border-card-border rounded-xl p-5">
-          <div className="text-sm text-foreground/60 mb-1">{stat.label}</div>
-          <div className={`text-2xl font-bold ${stat.color}`}>
+        <div key={stat.label} className="bg-card-bg rounded-2xl p-3 text-center">
+          <div className="text-xl font-bold" style={{ color: stat.color }}>
             {stat.value}
-            <span className="text-sm font-normal text-foreground/40 ml-1">{stat.unit}</span>
+            <span className="text-[10px] font-normal text-foreground/30 ml-0.5">{stat.unit}</span>
           </div>
+          <div className="text-[10px] text-foreground/40 mt-0.5">{stat.label}</div>
         </div>
       ))}
     </div>

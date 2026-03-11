@@ -7,36 +7,45 @@ interface ProgressChartProps {
 }
 
 export default function ProgressChart({ dailyActivity }: ProgressChartProps) {
-  // 直近7日間のデータ
   const last7Days = getLast7Days();
   const data = last7Days.map(date => {
     const activity = dailyActivity.find(a => a.date === date);
     return {
       date,
-      label: formatDateLabel(date),
       words: activity?.wordsLearned ?? 0,
       minutes: activity?.minutesStudied ?? 0,
+      active: !!(activity && (activity.wordsLearned > 0 || activity.minutesStudied > 0)),
     };
   });
 
-  const maxWords = Math.max(...data.map(d => d.words), 5);
+  const maxVal = Math.max(...data.map(d => d.words + d.minutes), 5);
 
   return (
-    <div className="bg-card-bg border border-card-border rounded-xl p-6">
-      <h3 className="text-sm font-medium text-foreground/60 mb-4">直近7日間の学習状況</h3>
-      <div className="flex items-end gap-2 h-32">
-        {data.map(day => {
-          const height = maxWords > 0 ? (day.words / maxWords) * 100 : 0;
+    <div className="bg-card-bg rounded-2xl p-4">
+      <h3 className="text-xs font-medium text-foreground/40 mb-3">今週のアクティビティ</h3>
+      <div className="flex items-end gap-2 h-20">
+        {data.map((day, i) => {
+          const date = new Date(day.date);
+          const dayLabel = ['日', '月', '火', '水', '木', '金', '土'][date.getDay()];
+          const isToday = i === 6;
+          const height = maxVal > 0 ? Math.max(((day.words + day.minutes) / maxVal) * 100, day.active ? 15 : 0) : 0;
+
           return (
-            <div key={day.date} className="flex-1 flex flex-col items-center gap-2">
-              <span className="text-xs text-foreground/50">{day.words}</span>
-              <div className="w-full bg-card-border rounded-t relative" style={{ height: '100px' }}>
+            <div key={day.date} className="flex-1 flex flex-col items-center gap-1.5">
+              <div className="w-full relative rounded-lg overflow-hidden" style={{ height: '56px' }}>
+                <div className="absolute inset-0 bg-card-border/50 rounded-lg" />
                 <div
-                  className="absolute bottom-0 w-full bg-accent rounded-t transition-all duration-500"
+                  className={`absolute bottom-0 w-full rounded-lg transition-all duration-500 ${
+                    isToday ? 'bg-accent' : day.active ? 'bg-accent/50' : ''
+                  }`}
                   style={{ height: `${height}%` }}
                 />
               </div>
-              <span className="text-[10px] text-foreground/40">{day.label}</span>
+              <span className={`text-[9px] ${
+                isToday ? 'text-accent font-bold' : 'text-foreground/25'
+              }`}>
+                {dayLabel}
+              </span>
             </div>
           );
         })}
@@ -52,9 +61,4 @@ function getLast7Days(): string[] {
     days.push(d.toISOString().split('T')[0]);
   }
   return days;
-}
-
-function formatDateLabel(dateStr: string): string {
-  const d = new Date(dateStr);
-  return `${d.getMonth() + 1}/${d.getDate()}`;
 }

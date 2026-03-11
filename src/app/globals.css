@@ -1,15 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0f172a;
-  --foreground: #e2e8f0;
-  --card-bg: #1e293b;
-  --card-border: #334155;
-  --accent: #3b82f6;
-  --accent-hover: #2563eb;
-  --success: #22c55e;
+  --background: #0a0a0f;
+  --foreground: #e8eaf0;
+  --card-bg: #14141f;
+  --card-border: #1e1e2e;
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-glow: rgba(99, 102, 241, 0.15);
+  --success: #10b981;
+  --success-glow: rgba(16, 185, 129, 0.15);
   --warning: #f59e0b;
+  --warning-glow: rgba(245, 158, 11, 0.15);
   --danger: #ef4444;
+  --streak-fire: #ff6b35;
+  --streak-glow: rgba(255, 107, 53, 0.25);
+  --xp-bar: #8b5cf6;
+  --surface: #111118;
 }
 
 @theme inline {
@@ -19,38 +26,97 @@
   --color-card-border: var(--card-border);
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
+  --color-accent-glow: var(--accent-glow);
   --color-success: var(--success);
+  --color-success-glow: var(--success-glow);
   --color-warning: var(--warning);
+  --color-warning-glow: var(--warning-glow);
   --color-danger: var(--danger);
-  --font-sans: system-ui, -apple-system, sans-serif;
+  --color-streak-fire: var(--streak-fire);
+  --color-streak-glow: var(--streak-glow);
+  --color-xp-bar: var(--xp-bar);
+  --color-surface: var(--surface);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
   --font-mono: ui-monospace, monospace;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  height: 100%;
+  overflow: hidden;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
-/* カードフリップアニメーション */
-.flip-card {
-  perspective: 1000px;
+/* アプリ風スクロール */
+.app-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  scrollbar-width: none;
+}
+.app-scroll::-webkit-scrollbar {
+  display: none;
 }
 
+/* カードフリップ */
+.flip-card { perspective: 1000px; }
 .flip-card-inner {
-  transition: transform 0.6s;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   transform-style: preserve-3d;
 }
+.flip-card-inner.flipped { transform: rotateY(180deg); }
+.flip-card-front, .flip-card-back { backface-visibility: hidden; }
+.flip-card-back { transform: rotateY(180deg); }
 
-.flip-card-inner.flipped {
-  transform: rotateY(180deg);
+/* ストリーク炎 */
+@keyframes flame-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
 }
+@keyframes flame-glow {
+  0%, 100% { box-shadow: 0 0 20px var(--streak-glow); }
+  50% { box-shadow: 0 0 40px var(--streak-glow), 0 0 60px var(--streak-glow); }
+}
+.streak-flame { animation: flame-pulse 2s ease-in-out infinite; }
+.streak-glow { animation: flame-glow 2s ease-in-out infinite; }
 
-.flip-card-front,
-.flip-card-back {
-  backface-visibility: hidden;
-}
+/* XPバー */
+@keyframes xp-fill { from { width: 0%; } }
+.xp-bar-fill { animation: xp-fill 1s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
 
-.flip-card-back {
-  transform: rotateY(180deg);
+/* 正解ポップ */
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
+.correct-pop { animation: pop 0.3s ease-out; }
+
+/* マイク録音パルス */
+@keyframes mic-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  50% { box-shadow: 0 0 0 14px rgba(239, 68, 68, 0); }
+}
+.mic-recording { animation: mic-pulse 1.5s ease-in-out infinite; }
+
+/* スライドアップ */
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.slide-up { animation: slide-up 0.35s ease-out forwards; }
+
+/* セーフエリア */
+.safe-bottom { padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px); }
