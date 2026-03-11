@@ -5,6 +5,7 @@ import StreakDisplay from '@/components/dashboard/StreakDisplay';
 import StatsOverview from '@/components/dashboard/StatsOverview';
 import ProgressChart from '@/components/dashboard/ProgressChart';
 import ModeCard from '@/components/dashboard/ModeCard';
+import ThemeToggle from '@/components/ui/ThemeToggle';
 
 export default function Dashboard() {
   const { progress } = useProgress();
@@ -23,11 +24,14 @@ export default function Dashboard() {
             {new Date().toLocaleDateString('ja-JP', { month: 'long', day: 'numeric', weekday: 'short' })}
           </p>
         </div>
-        {studiedToday && (
-          <div className="bg-success/15 text-success text-xs font-semibold px-3 py-1 rounded-full">
-            TODAY DONE
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          {studiedToday && (
+            <div className="bg-success/15 text-success text-xs font-semibold px-3 py-1 rounded-full">
+              TODAY DONE
+            </div>
+          )}
+          <ThemeToggle />
+        </div>
       </div>
 
       {/* ストリーク */}
